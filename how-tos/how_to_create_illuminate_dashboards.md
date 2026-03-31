@@ -29,6 +29,83 @@ Dashboards visualize your Metrics over time as charts. You can overlay Decision 
 
 **Base URL:** `https://admin-api.pubnub.com/v2/illuminate/dashboards`
 
+## Using the manage_illuminate Tool
+
+Use the `manage_illuminate` tool's `create` operation to POST a new Dashboard. Save the returned `id` and `charts[*].id` — the charts array is a **full replacement** on every PUT, so all existing chart IDs must be included in every update.
+
+**Create a Dashboard:**
+
+```json
+{
+  "resource": "dashboard",
+  "operation": "create",
+  "data": {
+    "name": "Chat Engagement",
+    "dateRange": "24 hours",
+    "charts": [
+      {
+        "name": "Message Volume Over Time",
+        "metric": { "id": "<metric-id>" },
+        "viewType": "LINE",
+        "size": "FULL",
+        "showDecisions": true,
+        "dimensionIds": ["<user-field-id>"],
+        "decisionIds": ["<decision-id>"]
+      }
+    ]
+  }
+}
+```
+
+**Update a Dashboard (GET first to capture all chart IDs):**
+
+```json
+{
+  "resource": "dashboard",
+  "operation": "get",
+  "id": "<dashboard-id>"
+}
+```
+
+Then PUT the full body — include all existing charts with their `id` values:
+
+```json
+{
+  "resource": "dashboard",
+  "operation": "update",
+  "id": "<dashboard-id>",
+  "data": {
+    "name": "Chat Engagement",
+    "dateRange": "1 week",
+    "charts": [
+      {
+        "id": "<existing-chart-id>",
+        "name": "Message Volume Over Time",
+        "metric": { "id": "<metric-id>" },
+        "viewType": "LINE",
+        "size": "FULL",
+        "showDecisions": true,
+        "dimensionIds": ["<user-field-id>"],
+        "decisionIds": ["<decision-id>"]
+      }
+    ]
+  }
+}
+```
+
+**List all Dashboards:**
+
+```json
+{
+  "resource": "dashboard",
+  "operation": "list"
+}
+```
+
+> **Critical:** The `charts` array is a full replacement on every `update` call. Any chart omitted from the body is permanently deleted. Always `get` the current dashboard state before updating.
+
+---
+
 ## Chart Types
 
 | `viewType` | Best for |

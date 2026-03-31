@@ -27,6 +27,79 @@ A Business Object is Illuminate's data schema layer. It tells Illuminate which f
 
 **Base URL:** `https://admin-api.pubnub.com/v2/illuminate/business-objects`
 
+## Using the manage_illuminate Tool
+
+Use the `manage_illuminate` tool's `create` operation to POST a new Business Object, then the `activate` operation to enable data ingestion. Save the returned `id` and `fields[*].id` — they are required for every downstream resource.
+
+**Create a Business Object (inactive):**
+
+```json
+{
+  "resource": "business-object",
+  "operation": "create",
+  "data": {
+    "name": "Chat Events",
+    "description": "Tracks chat message events from the main application",
+    "isActive": false,
+    "subkeys": ["sub-c-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"],
+    "fields": [
+      {
+        "name": "User ID",
+        "source": "JSONPATH",
+        "jsonPath": "$.message.body.user_id",
+        "jsonFieldType": "TEXT"
+      },
+      {
+        "name": "Channel",
+        "source": "JSONPATH",
+        "jsonPath": "$.message.body.channel",
+        "jsonFieldType": "TEXT"
+      },
+      {
+        "name": "Message Length",
+        "source": "JSONPATH",
+        "jsonPath": "$.message.body.length",
+        "jsonFieldType": "NUMERIC"
+      }
+    ]
+  }
+}
+```
+
+**Activate the Business Object (begin data ingestion):**
+
+```json
+{
+  "resource": "business-object",
+  "operation": "activate",
+  "id": "<business-object-id>",
+  "subscribe_key": "sub-c-..."
+}
+```
+
+**List all Business Objects:**
+
+```json
+{
+  "resource": "business-object",
+  "operation": "list"
+}
+```
+
+**Deactivate (before editing fields or dependent Decisions):**
+
+```json
+{
+  "resource": "business-object",
+  "operation": "deactivate",
+  "id": "<business-object-id>"
+}
+```
+
+> **Important:** All JSONPath expressions must start with `$.message.body.` — Illuminate wraps each PubNub message in `{ "message": { "body": <your_message> } }` before applying JSONPaths.
+
+---
+
 ## How Illuminate Receives Messages
 
 Illuminate wraps every PubNub message it ingests into the following structure:

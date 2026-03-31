@@ -30,6 +30,76 @@ Queries let you define flexible data pipelines over Business Object fields — a
 
 **Base URL:** `https://admin-api.pubnub.com/v2/illuminate/queries`
 
+## Using the manage_illuminate Tool
+
+Use the `manage_illuminate` tool to run ad-hoc queries, save queries, and retrieve output field IDs for use in QUERY-sourced Decisions.
+
+**Run an ad-hoc query (test without saving):**
+
+```json
+{
+  "resource": "query",
+  "operation": "execute-adhoc",
+  "data": {
+    "version": "2.0",
+    "pipeline": {
+      "sources": [
+        {
+          "id": "events",
+          "type": "businessObject",
+          "businessObjectId": "<business-object-id>",
+          "fields": [
+            { "id": "<user-field-id>", "alias": "user_id", "type": "dimension" },
+            { "id": "<channel-field-id>", "alias": "channel", "type": "dimension" }
+          ],
+          "timeRange": { "type": "relative", "value": 3600 }
+        }
+      ],
+      "output": { "sourceId": "events", "fields": ["user_id", "channel"], "limit": 100 }
+    }
+  }
+}
+```
+
+**Save a Query:**
+
+```json
+{
+  "resource": "query",
+  "operation": "create",
+  "data": {
+    "name": "Cross-Posting Spam Detection",
+    "definition": {
+      "version": "2.0",
+      "pipeline": { "...": "full pipeline body here" }
+    }
+  }
+}
+```
+
+**Get output field IDs (required before creating a QUERY-sourced Decision):**
+
+```json
+{
+  "resource": "query",
+  "operation": "get-fields",
+  "id": "<query-id>"
+}
+```
+
+**List all saved Queries:**
+
+```json
+{
+  "resource": "query",
+  "operation": "list"
+}
+```
+
+> **Important:** Always call `get-fields` on a saved Query before creating a QUERY-sourced Decision. The field IDs returned are used as `inputFields[].sourceId` with `sourceType: "QUERYFIELD"`.
+
+---
+
 ## When to Use Queries vs Metrics
 
 | Use | Recommended approach |

@@ -123,51 +123,39 @@ const multiTenantOnboardingLong = {
 
 // ─── Illuminate prompts ───────────────────────────────────────────────────────
 
-const illuminateSpamDetectionShort = {
-  name: "illuminate-spam-detection-short",
+const illuminateSpamDetection = {
+  name: "illuminate-spam-detection",
   definition: {
     title: "Set Up Illuminate Spam Detection",
     description:
-      "Guided setup of a complete Illuminate spam detection pipeline (message flooding and cross-posting) - short version",
+      "Guided setup of a complete Illuminate spam detection pipeline (message flooding and cross-posting)",
   },
   handler: generateHandler(
-    "Act as a senior developer and use PubNub MCP to set up Illuminate spam detection for my chat application."
+    "Act as a community moderator and use PubNub MCP to set up Illuminate spam detection. Start by asking: Is the concern chat flooding (one user sending too many messages in one channel), cross-posting (the same message sent to many channels), or both? For each pattern, use the predefined Illuminate Query Builder template — do NOT recreate the query logic manually. For chat spam use cases, the Business Object fields User, Channel, Message, and Message Type are automatically created by Illuminate — do not ask the user to define them. Before creating anything, describe the detection approach in 1–2 sentences in plain English. Then show an escalating decision table with three severity rows: Low → notify moderator (quiet alert); Medium → notify + mute user in channel; High → notify + mute + ban user from channel. Ask the user to confirm: (a) the time window (default: 60 seconds), (b) the message count or channel count thresholds for each severity level, and (c) which actions to enable per row. After confirmation: create the Business Object if not already active, use the Query Builder template for the selected spam pattern(s), create the Decision with the confirmed escalating rules, and activate. Publish fake test data to verify the Decision fires correctly. Show the action log to confirm."
   ),
 };
 
-const illuminateSpamDetectionLong = {
-  name: "illuminate-spam-detection-long",
-  definition: {
-    title: "Set Up Illuminate Spam Detection",
-    description:
-      "Guided setup of a complete Illuminate spam detection pipeline (message flooding and cross-posting) - long version",
-  },
-  handler: generateHandler(
-    "Act as a senior developer and use PubNub MCP to build a complete Illuminate spam detection pipeline for a chat application. 1. Create a Business Object with fields for user_id (TEXT), channel (TEXT), and message_body (TEXT). Activate it against the subscribe key. 2. Create a COUNT metric grouped by user_id with a 60-second evaluation window. 3. Create a METRIC-sourced Decision that fires when the count exceeds 10. Actions: set the user's App Context status to 'muted' and publish an alert to the moderation channel. Enable the Decision after verifying rules. 4. Create a saved Query using the cross-posting spam template. Create a QUERY-sourced Decision that flags users posting the same content to more than 5 channels. 5. Publish fake test data to verify both Decisions fire correctly. Show the action log to confirm."
-  ),
-};
-
-const illuminateUseCaseShort = {
-  name: "illuminate-use-case-short",
+const illuminateUseCase = {
+  name: "illuminate-use-case",
   definition: {
     title: "Set Up an Illuminate Use Case",
     description:
-      "Guided setup of a new Illuminate analytics and automation use case - short version",
+      "Guided setup of a new Illuminate analytics and automation use case",
   },
   handler: generateHandler(
-    "Act as a senior developer and use PubNub MCP to set up a new Illuminate use case for my PubNub application."
+    "Act as a product manager and use PubNub MCP to set up a complete Illuminate use case. Follow this guided flow: Step 0 — Identify the goal. Ask: (1) What outcome do you want? Choose from: reward and incentivize desired behavior (e.g. most engaged users, high spenders, poll participants); prevent spam or abuse; alert when operational metrics like wait time or failure rates exceed normal; or automate live event or auction actions. (2) What should Illuminate do when the condition is met? Options: notify via webhook or channel message, reward or badge a user, mute or moderate a user, or trigger an external workflow. (3) How quickly should it react? Immediately on each event, near real-time every 1–5 minutes, or trend-based every 10–60 minutes. Step 1 — Choose the simplest implementation path: if the goal is spam (flooding or cross-posting) or ranking (Top N / Bottom N), use the Query Builder predefined templates. Otherwise use Metrics + Dashboard + Decision. Step 2 — Confirm data. Ask for one of: a sample event (JSON), a list of fields already in the payload, or where the data currently lives. Step 3 — Preview before building. Describe the automation in 1–2 sentences in plain English. Present the decision logic as a conditions → actions table with one rule per row. Ask for confirmation and threshold adjustments before creating any Illuminate resources. Step 4 — Build: create the Business Object (or confirm the existing one is active), create 1–3 Metrics for KPI visibility and tuning, create a Dashboard chart, then create and activate the Decision using the confirmed thresholds. Step 5 — Validate: publish fake test data, check the dashboard and action log, and suggest threshold or rate-limit adjustments based on results."
   ),
 };
 
-const illuminateUseCaseLong = {
-  name: "illuminate-use-case-long",
+const illuminateRewardEngagement = {
+  name: "illuminate-reward-engagement",
   definition: {
-    title: "Set Up an Illuminate Use Case",
+    title: "Reward Engagement in Live Events",
     description:
-      "Guided setup of a new Illuminate analytics and automation use case - long version",
+      "Guided setup of an Illuminate engagement reward pipeline for live events and gaming",
   },
   handler: generateHandler(
-    "Act as a senior developer and use PubNub MCP to set up a complete Illuminate use case. Start by asking me what events I want to track and what automation I want to trigger. Then: 1. Create a Business Object that captures the relevant fields from my PubNub messages using JSONPath expressions. Activate it against my subscribe key. 2. Create the appropriate Metric (COUNT, SUM, or AVG) based on the use case. 3. Create a Decision sourced from the Metric or Business Object with rules and actions that match my automation goal. Enable the Decision after verifying rules. 4. Create a Dashboard to visualize the Metric over time. 5. Publish fake test data to confirm the setup is working end-to-end."
+    "Act as a live events manager and use PubNub MCP to set up Illuminate engagement rewards. Start by asking which participation behaviors to reward: poll answers, chat messages, reactions, or re-engaging low-engagement users (or a combination). For ranking rewards (Top N most chatty, Top N by reactions, Bottom N by engagement), use the predefined Illuminate Query Builder templates — do NOT recreate the ranking logic manually. Before creating anything, describe the reward approach in 1–2 sentences in plain English. Then show a decision table: Poll answered → reward points or badge; Top N most chatty → Incentive A; Top N by reactions → Incentive B; Bottom N by engagement → Incentive C (re-engagement nudge). Ask the user to confirm: (a) which rows to enable, (b) the reward or incentive for each, (c) the evaluation window, and (d) a per-rule rate limit (default: once per day per user) to prevent duplicate rewards. After confirmation: create the Business Object capturing poll, chat, and reaction events (fields: user, channel, event type). Create COUNT metrics — one per behavior being measured. Create a Dashboard with an engagement trend chart and active vs inactive user breakdown. Create the Decision(s) with the confirmed rules and rate limits, and activate. Optionally: if the user wants an engagement drop alert, add a rule that fires when overall channel activity drops below a threshold and notifies moderators. Publish fake test data to verify rewards fire correctly. Show the action log to confirm."
   ),
 };
 
@@ -179,7 +167,7 @@ const illuminateTestVerify = {
       "Step-by-step test and verification workflow for an existing Illuminate configuration",
   },
   handler: generateHandler(
-    "Act as a senior developer and use PubNub MCP to test and verify my existing Illuminate setup. 1. List all Business Objects and confirm the relevant one is active. 2. Check which fields are populated using a field-health query — flag any fields returning empty strings as potential JSONPath mismatches. 3. Publish a small set of fake test messages (generic scenario) to the subscribe key. Wait 30 seconds for Illuminate ingestion. 4. Run a raw-snapshot query to confirm messages are being captured. 5. Check the action log for any active Decisions to confirm they are evaluating data. Report any issues found and suggest fixes."
+    "Act as a developer and use PubNub MCP to test and verify my existing Illuminate setup. 1. List all Business Objects and confirm the relevant one is active. 2. Check which fields are populated using a field-health query — flag any fields returning empty strings as potential JSONPath mismatches. 3. Publish a small set of fake test messages (generic scenario) to the subscribe key. Wait 30 seconds for Illuminate ingestion. 4. Run a raw-snapshot query to confirm messages are being captured. 5. Check the action log for any active Decisions to confirm they are evaluating data. Report any issues found and suggest fixes. If Decisions are firing too frequently or not at all, suggest adjustments to time window, thresholds, filters, and execution rate limits."
   ),
 };
 
@@ -193,9 +181,8 @@ export const prompts = [
   oemClientManagement,
   multiTenantOnboardingShort,
   multiTenantOnboardingLong,
-  illuminateSpamDetectionShort,
-  illuminateSpamDetectionLong,
-  illuminateUseCaseShort,
-  illuminateUseCaseLong,
+  illuminateSpamDetection,
+  illuminateRewardEngagement,
+  illuminateUseCase,
   illuminateTestVerify,
 ];

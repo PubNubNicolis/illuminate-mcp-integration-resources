@@ -30,6 +30,69 @@ A Metric defines an aggregation applied to Business Object fields over a sliding
 
 **Base URL:** `https://admin-api.pubnub.com/v2/illuminate/metrics`
 
+## Using the manage_illuminate Tool
+
+Use the `manage_illuminate` tool's `create` operation to POST a new Metric. Save the returned `id`, `measureId`, and `dimensionIds` — they are required when creating a METRIC-sourced Decision.
+
+**Create a COUNT Metric:**
+
+```json
+{
+  "resource": "metric",
+  "operation": "create",
+  "data": {
+    "name": "Message Count by User",
+    "businessObjectId": "<business-object-id>",
+    "function": "COUNT",
+    "evaluationWindow": 300,
+    "dimensionIds": [
+      "<user-id-field-id>",
+      "<channel-field-id>"
+    ]
+  }
+}
+```
+
+**Create a SUM Metric:**
+
+```json
+{
+  "resource": "metric",
+  "operation": "create",
+  "data": {
+    "name": "Total Purchase Amount by User",
+    "businessObjectId": "<business-object-id>",
+    "function": "SUM",
+    "measureId": "<amount-field-id>",
+    "evaluationWindow": 3600,
+    "dimensionIds": ["<user-id-field-id>"]
+  }
+}
+```
+
+**List all Metrics:**
+
+```json
+{
+  "resource": "metric",
+  "operation": "list"
+}
+```
+
+**Get a specific Metric:**
+
+```json
+{
+  "resource": "metric",
+  "operation": "get",
+  "id": "<metric-id>"
+}
+```
+
+> **Important:** For COUNT metrics, do not include `measureId` in `data` — the API returns a 400 error if you do.
+
+---
+
 ## Dimensions vs Measures
 
 Before creating a Metric, understand the distinction between the two types of Business Object fields:

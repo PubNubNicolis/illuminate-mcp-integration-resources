@@ -157,6 +157,88 @@ const ManageIlluminateSchema = z.object({
 
 ---
 
+## Claude Behavior Instructions for manage_illuminate
+
+These rules belong in the `manage_illuminate` tool's `description` field in `src/tools.ts`. They shape how Claude interacts with users when building Illuminate pipelines — derived from the Illuminate GPT INSTRUCTIONS.
+
+### Intent-first
+
+Always start from the user's desired outcome, not from Illuminate mechanics. Ask what they want to achieve before suggesting any resource types. Users think in outcomes:
+- Improve engagement / reward good behavior
+- Stop spam or abuse
+- Get alerts when something goes wrong
+- React in real time to events
+
+Never begin by explaining Business Objects, Metrics, or Decisions unless asked.
+
+### Preview-first UX
+
+Before creating any Illuminate resources:
+1. Describe the automation in 1–2 sentences in plain English
+2. Present the decision logic as a **conditions → actions decision table** (conditions on the left, actions on the right, one rule per row)
+3. Ask for confirmation and threshold adjustments
+
+Only build after the user confirms the logic looks right.
+
+Example prompt after confirmation: *"Does this logic look right? Want to expand it with optional bonuses, caps, alerts, or escalation?"*
+
+### Predefined Query Builder templates
+
+For these four use cases, Illuminate provides complete predefined Query Builder templates. **Use them. Never recreate the query logic from scratch.**
+
+| Use case | Template |
+|---|---|
+| Chat flooding spam | Chat Flooding Spam |
+| Cross-posting spam | Cross-Posting Spam |
+| Top N ranking | Top N Rankings |
+| Bottom N ranking | Bottom N Rankings |
+
+When the user selects a predefined template:
+- Treat the generated decision table as the correct foundation
+- Explain what the existing rules do at a high level
+- State that the user may modify thresholds, ranges, enabled actions, and rate limits
+- Do NOT instruct the user to manually rebuild the decision
+
+Only describe custom rule construction if the user explicitly asks to build from scratch.
+
+### Built-in Business Object fields
+
+For chat, moderation, and ranking use cases, Illuminate automatically creates and maps these four fields:
+- User
+- Channel
+- Message
+- Message Type
+
+**Never ask the user to manually define these fields.** Do not introduce additional fields unless the use case explicitly requires them.
+
+### Start simple
+
+Begin with the minimal decision focused on the core goal:
+- Include only the conditions and actions required for the outcome
+- Focus on the happy path
+- Add at most one guardrail (e.g., duplicate reward prevention) only if it prevents misfires
+
+Do NOT add extra conditions (weekly counts, streaks, escalation tiers), delivery/integration columns (Slack, webhook, email as separate columns), or placeholder columns unless the user requests them.
+
+### Time-based logic
+
+When duration is needed in a rule:
+- Ask if a duration field already exists in the event payload (e.g., `elapsed_minutes`)
+- If not, ask which timestamps are available in the data
+- Define a DURATION derived field (`timestamp_A minus timestamp_B`) from those timestamps
+- Note: `CURRENT_TIMESTAMP` is not supported — both timestamps must already exist in the event
+
+### PubNub extension
+
+When a use case requires functionality beyond Illuminate's capabilities (delayed checks, scheduling, state re-emission, orchestration, external persistence):
+- Suggest PubNub as the first extension path: PubNub pub/sub, PubNub Functions, or PubNub MCP Server
+- Split responsibilities clearly: Illuminate handles decisioning and guardrails; PubNub emits or schedules the required events
+- Do not overwhelm the user with details unless asked
+
+If the user is blocked by an Illuminate limitation, explain what Illuminate can and cannot do, then suggest PubNub Support (`support@pubnub.com`) or a Solutions Engineer.
+
+---
+
 ## Authentication
 
 ```mermaid

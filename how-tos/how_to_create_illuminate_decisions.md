@@ -36,6 +36,89 @@ A Decision is Illuminate's automation engine. It evaluates conditions against yo
 
 **Base URL:** `https://admin-api.pubnub.com/v2/illuminate/decisions`
 
+## Using the manage_illuminate Tool
+
+When using the `manage_illuminate` MCP tool, the 4-step POST → save IDs → PUT rules → PUT enable workflow is handled automatically by the tool's `create` operation. Pass the full decision body (including `inputFields`, `outputFields`, `actions`, and `rules`) and the handler runs the multi-step sequence internally.
+
+**Step 1 — Create the Decision scaffold (tool handles the 4-step flow):**
+
+```json
+{
+  "resource": "decision",
+  "operation": "create",
+  "data": {
+    "name": "Mute Spam Users",
+    "description": "Mutes users who send more than 10 messages in 60 seconds",
+    "sourceType": "METRIC",
+    "sourceId": "<count-metric-id>",
+    "executionFrequency": 60,
+    "inputFields": [
+      { "name": "Message Count", "sourceType": "BUSINESSOBJECT", "sourceId": "<bo-id>",         "dataType": "NUMERIC", "order": 1 },
+      { "name": "User ID",       "sourceType": "DIMENSION",      "sourceId": "<user-field-id>", "dataType": "TEXT",    "order": 2 },
+      { "name": "Channel",       "sourceType": "DIMENSION",      "sourceId": "<chan-field-id>", "dataType": "TEXT",    "order": 3 }
+    ],
+    "outputFields": [
+      { "name": "User to Mute", "variable": "userId" }
+    ],
+    "actions": [
+      {
+        "name": "Set User Status to Muted",
+        "actionType": "APPCONTEXT_SET_USER_METADATA",
+        "template": {
+          "subkey": "sub-c-...",
+          "userId": "${userId}",
+          "status": "muted"
+        }
+      }
+    ],
+    "rules": [
+      {
+        "inputValues": [
+          { "inputFieldId": "<count-field-id>",   "operation": "NUMERIC_GREATER_THAN", "argument": "10" },
+          { "inputFieldId": "<user-field-id>",    "operation": "ANY",                  "argument": "" },
+          { "inputFieldId": "<channel-field-id>", "operation": "ANY",                  "argument": "" }
+        ],
+        "outputValues": [
+          { "outputFieldId": "<userId-output-id>", "value": "${<user-field-id>}" }
+        ],
+        "actionValues": [
+          {
+            "actionId": "<action-id>",
+            "status": true,
+            "executionLimitType": "ONCE_PER_INTERVAL_PER_CONDITION_GROUP",
+            "executionLimitIntervalInSeconds": 300,
+            "executionLimitInputFieldIds": ["<user-field-id>"]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+> **Note:** The `hitType`, `executeOnce`, `activeFrom`, and `activeUntil` fields are automatically injected as safe defaults by the tool handler — you do not need to supply them. The tool runs the POST → save IDs → PUT rules → PUT enable sequence in a single `create` call.
+
+**Activate after creation:**
+
+```json
+{
+  "resource": "decision",
+  "operation": "activate",
+  "id": "<decision-id>"
+}
+```
+
+**List all Decisions (check METRIC decision count before creating):**
+
+```json
+{
+  "resource": "decision",
+  "operation": "list"
+}
+```
+
+---
+
 ## Source Types
 
 Choose the source type that matches your use case:
