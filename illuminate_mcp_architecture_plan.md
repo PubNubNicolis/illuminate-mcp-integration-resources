@@ -333,26 +333,25 @@ Following the existing `vitest` + MSW pattern in the codebase:
 
 ## Documentation API — Illuminate How-Tos and Best Practices
 
-The `how_to` tool in `pubnub-mcp-server` fetches content from `docs.pubnubtools.com` — it does not read local files. Valid slugs are hardcoded in `howToSlugs` in `src/lib/docs/schemas.ts`. The 8 Illuminate how-to files in `MCP/how-tos/illuminate/` are not accessible through that tool until they are published to the docs API and their slugs added.
+The `how_to` tool in `pubnub-mcp-server` fetches content from `docs.pubnubtools.com` — it does not read local files. Valid slugs are hardcoded in `howToSlugs` in `src/lib/docs/schemas.ts`. The 9 Illuminate how-to files in `MCP/how-tos/illuminate/` are not accessible through that tool until they are published to the docs API and their slugs added.
 
 **Repo:** `https://github.com/PubNubDevelopers/documentation-api`
 
 ### How-tos to publish
 
-8 files from `MCP/how-tos/illuminate/` need to be added to the documentation-api repo:
+9 files need to be added to the documentation-api repo:
 
-| Local file | Proposed slug |
-| ---------- | ------------- |
-| `how_to_get_an_illuminate_api_key.md` | `illuminate-get-api-key` |
-| `how_to_create_illuminate_business_objects.md` | `illuminate-business-objects` |
-| `how_to_create_illuminate_metrics.md` | `illuminate-metrics` |
-| `how_to_create_illuminate_queries.md` | `illuminate-queries` |
-| `how_to_create_illuminate_decisions.md` | `illuminate-decisions` |
-| `how_to_create_illuminate_dashboards.md` | `illuminate-dashboards` |
-| `how_to_test_illuminate_with_fake_data.md` | `illuminate-test-with-fake-data` |
-| `how_to_analyze_illuminate_data.md` | `illuminate-analyze-data` |
-
-(`how_to_automate_illuminate_with_scripts.md` covers Python-script automation and is not relevant to the TypeScript integration.)
+| Local file | Slug |
+| ---------- | ---- |
+| *(new gaming/live events guide — create this file)* | `set-up-illuminate-gaming` |
+| `how_to_create_illuminate_business_objects.md` | `how-to-create-illuminate-business-objects` |
+| `how_to_create_illuminate_metrics.md` | `how-to-create-illuminate-metrics` |
+| `how_to_create_illuminate_queries.md` | `how-to-create-illuminate-queries` |
+| `how_to_create_illuminate_decisions.md` | `how-to-create-illuminate-decisions` |
+| `how_to_create_illuminate_dashboards.md` | `how-to-create-illuminate-dashboards` |
+| `how_to_automate_illuminate_with_scripts.md` | `how-to-automate-illuminate-with-scripts` |
+| `how_to_test_illuminate_with_fake_data.md` | `how-to-test-illuminate-with-fake-data` |
+| `how_to_analyze_illuminate_data.md` | `how-to-analyze-illuminate-data` |
 
 ### Best practices to publish
 
@@ -360,20 +359,21 @@ Sections 13–19 of `MCP/bestpratice.md` cover Illuminate. These need to be adde
 
 ### Changes needed in `pubnub-mcp-server`
 
-Once the docs API is updated, add the 8 slugs to `howToSlugs` in `src/lib/docs/schemas.ts`:
+Once the docs API is updated, add the 9 slugs to `howToSlugs` in `src/lib/docs/schemas.ts` after the last existing entry (`"write-a-pubnub-app"`):
 
 ```typescript
-"illuminate-get-api-key",
-"illuminate-business-objects",
-"illuminate-metrics",
-"illuminate-queries",
-"illuminate-decisions",
-"illuminate-dashboards",
-"illuminate-test-with-fake-data",
-"illuminate-analyze-data",
+"set-up-illuminate-gaming",
+"how-to-create-illuminate-business-objects",
+"how-to-create-illuminate-metrics",
+"how-to-create-illuminate-queries",
+"how-to-create-illuminate-decisions",
+"how-to-create-illuminate-dashboards",
+"how-to-automate-illuminate-with-scripts",
+"how-to-test-illuminate-with-fake-data",
+"how-to-analyze-illuminate-data",
 ```
 
-Claude will then call `how_to(slug="illuminate-decisions")` the same way it calls any other guide today — consistent with the existing pattern.
+Claude will then call `how_to(slug="how-to-create-illuminate-decisions")` the same way it calls any other guide today — consistent with the existing pattern.
 
 ### Dependency note
 
@@ -394,5 +394,5 @@ This work is independent of the `manage_illuminate` tool implementation. The too
 | `.env.sample` | Modify | Add `ILLUMINATE_API_KEY=` |
 | `server.json` | Modify | Add `ILLUMINATE_API_KEY` to `environmentVariables[]` |
 | `src/prompts.ts` | Modify | Add 2-3 Illuminate workflow prompts |
-| `github.com/PubNubDevelopers/documentation-api` | Modify | Publish 8 Illuminate how-to guides and Illuminate best-practice sections (§13–19 of `MCP/bestpratice.md`) |
-| `src/lib/docs/schemas.ts` | Modify | Add 8 Illuminate slugs to `howToSlugs` array |
+| `github.com/PubNubDevelopers/documentation-api` | Modify | Publish 9 Illuminate how-to guides and Illuminate best-practice sections (§13–19 of `MCP/bestpratice.md`) |
+| `src/lib/docs/schemas.ts` | Modify | Add 9 Illuminate slugs to `howToSlugs` array |

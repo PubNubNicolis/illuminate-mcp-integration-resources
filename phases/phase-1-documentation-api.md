@@ -1,14 +1,14 @@
 ---
 name: "Phase 1 — Illuminate Documentation API"
 overview: >
-  Publish 8 Illuminate how-to guides and the Illuminate best-practice sections to the
+  Publish 9 Illuminate how-to guides and the Illuminate best-practice sections to the
   PubNub documentation API, then register the new slugs in pubnub-mcp-server so Claude
   can fetch them via the how_to() tool. This phase is independent of the manage_illuminate
   tool and should be completed first so Claude has reference material the moment the tool ships.
 todos:
   - id: publish-howto-files
     content: >
-      Copy the 8 how-to markdown files from illuminate-mcp/how-tos/ into the
+      Copy the 9 how-to markdown files from illuminate-mcp/how-tos/ into the
       documentation-api repo (github.com/PubNubDevelopers/documentation-api) using
       the slug mapping table below and open a PR.
     status: pending
@@ -19,7 +19,7 @@ todos:
     status: pending
   - id: add-slugs-to-schemas
     content: >
-      Once the documentation-api PR is merged, add the 8 new slugs to howToSlugs in
+      Once the documentation-api PR is merged, add the 9 new slugs to howToSlugs in
       pubnub-mcp-server/src/lib/docs/schemas.ts and open a PR.
     status: pending
   - id: verify-how-to-tool
@@ -35,7 +35,7 @@ isProject: false
 ## Context
 
 The `how_to` tool in `pubnub-mcp-server` fetches content from `docs.pubnubtools.com`.
-Valid slugs are hardcoded in `howToSlugs` in `src/lib/docs/schemas.ts`. The 8 Illuminate
+Valid slugs are hardcoded in `howToSlugs` in `src/lib/docs/schemas.ts`. The 9 Illuminate
 how-to files currently live in `illuminate-mcp/how-tos/` and are not accessible through
 the tool until they are published to the docs API and their slugs registered.
 
@@ -43,8 +43,8 @@ This phase must be done first (or at minimum concurrently with Phase 2) so that 
 the `manage_illuminate` tool ships, Claude can immediately call:
 
 ```
-how_to(slug="illuminate-decisions")
-how_to(slug="illuminate-business-objects")
+how_to(slug="how-to-create-illuminate-decisions")
+how_to(slug="how-to-create-illuminate-business-objects")
 ...
 ```
 
@@ -61,7 +61,7 @@ how_to(slug="illuminate-business-objects")
 
 ## Step 1 — Publish how-to files to documentation-api
 
-The 8 source files live in:
+The 9 source files live in:
 
 ```
 /Users/nicolis.miller/Documents/GitHub/illuminate-mcp/how-tos/
@@ -69,19 +69,17 @@ The 8 source files live in:
 
 ### Slug mapping
 
-| Source file | Proposed slug |
+| Source file | Slug |
 |---|---|
-| `how_to_get_an_illuminate_api_key.md` | `illuminate-get-api-key` |
-| `how_to_create_illuminate_business_objects.md` | `illuminate-business-objects` |
-| `how_to_create_illuminate_metrics.md` | `illuminate-metrics` |
-| `how_to_create_illuminate_queries.md` | `illuminate-queries` |
-| `how_to_create_illuminate_decisions.md` | `illuminate-decisions` |
-| `how_to_create_illuminate_dashboards.md` | `illuminate-dashboards` |
-| `how_to_test_illuminate_with_fake_data.md` | `illuminate-test-with-fake-data` |
-| `how_to_analyze_illuminate_data.md` | `illuminate-analyze-data` |
-
-> `how_to_automate_illuminate_with_scripts.md` covers Python-script automation and is NOT
-> relevant to the TypeScript MCP integration — do not publish it.
+| *(new gaming/live events guide — create this file)* | `set-up-illuminate-gaming` |
+| `how_to_create_illuminate_business_objects.md` | `how-to-create-illuminate-business-objects` |
+| `how_to_create_illuminate_metrics.md` | `how-to-create-illuminate-metrics` |
+| `how_to_create_illuminate_queries.md` | `how-to-create-illuminate-queries` |
+| `how_to_create_illuminate_decisions.md` | `how-to-create-illuminate-decisions` |
+| `how_to_create_illuminate_dashboards.md` | `how-to-create-illuminate-dashboards` |
+| `how_to_automate_illuminate_with_scripts.md` | `how-to-automate-illuminate-with-scripts` |
+| `how_to_test_illuminate_with_fake_data.md` | `how-to-test-illuminate-with-fake-data` |
+| `how_to_analyze_illuminate_data.md` | `how-to-analyze-illuminate-data` |
 
 Each file already has YAML frontmatter with `resource`, `triggers`, `requires`, and
 `produces` fields that the docs API can use for indexing. The files also contain
@@ -104,7 +102,8 @@ which is what the `write_pubnub_app` tool fetches.
 
 File: `pubnub-mcp-server/src/lib/docs/schemas.ts`
 
-Find the `howToSlugs` array and add the 8 new slugs. The existing array looks like:
+Find the `howToSlugs` array and add the 9 new slugs after the last existing entry
+(`"write-a-pubnub-app"` at line 756). The existing array looks like:
 
 ```typescript
 export const howToSlugs = [
@@ -112,20 +111,21 @@ export const howToSlugs = [
 ] as const;
 ```
 
-Add these 8 entries:
+Add these 9 entries:
 
 ```typescript
-"illuminate-get-api-key",
-"illuminate-business-objects",
-"illuminate-metrics",
-"illuminate-queries",
-"illuminate-decisions",
-"illuminate-dashboards",
-"illuminate-test-with-fake-data",
-"illuminate-analyze-data",
+"set-up-illuminate-gaming",
+"how-to-create-illuminate-business-objects",
+"how-to-create-illuminate-metrics",
+"how-to-create-illuminate-queries",
+"how-to-create-illuminate-decisions",
+"how-to-create-illuminate-dashboards",
+"how-to-automate-illuminate-with-scripts",
+"how-to-test-illuminate-with-fake-data",
+"how-to-analyze-illuminate-data",
 ```
 
-After this change, Claude will be able to call `how_to(slug="illuminate-decisions")`
+After this change, Claude will be able to call `how_to(slug="how-to-create-illuminate-decisions")`
 the same way it calls any other guide today — consistent with the existing pattern.
 
 ---
@@ -134,9 +134,9 @@ the same way it calls any other guide today — consistent with the existing pat
 
 After both PRs are merged and deployed:
 
-1. Call `how_to(slug="illuminate-decisions")` via the MCP tool
+1. Call `how_to(slug="how-to-create-illuminate-decisions")` via the MCP tool
 2. Confirm the response contains the decision creation workflow content
-3. Spot-check `how_to(slug="illuminate-business-objects")` for JSONPath guidance
+3. Spot-check `how_to(slug="how-to-create-illuminate-business-objects")` for JSONPath guidance
 
 ---
 

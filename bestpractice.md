@@ -112,7 +112,7 @@ MCP tool pointers:
 - Use **`write_pubnub_app`** for channel and schema guidance.
 - Use **`get_sdk_documentation`** for core patterns and API behavior.
 - Use **`get_chat_sdk_documentation`** for chat-specific modeling patterns.
-- Use **`manage_illuminate_assets`** to create and manage Business Objects once your channel and message schema are defined.
+- Use **`manage_illuminate`** to create and manage Business Objects once your channel and message schema are defined.
 
 ---
 
@@ -256,7 +256,7 @@ MCP tool pointers:
 
 - Use **`write_pubnub_app`** to cross-check ops and cost hygiene.
 - Use **`send_pubnub_message`**, **`subscribe_and_receive_pubnub_messages`**, **`get_pubnub_messages`**, and **`get_pubnub_presence`** during testing and incident triage.
-- Use **`manage_illuminate_assets`** to create metrics, decisions, and dashboards for real-time observability.
+- Use **`manage_illuminate`** to create metrics, decisions, and dashboards for real-time observability.
 
 ---
 
@@ -287,7 +287,7 @@ There are five core resource types, built in dependency order:
 
 MCP tool pointers:
 
-- Use **`manage_illuminate_assets`** to create and manage all Illuminate resource types.
+- Use **`manage_illuminate`** to create and manage all Illuminate resource types.
 - See `how_to` guides for end-to-end Illuminate setup walkthroughs.
 
 ---
@@ -323,7 +323,7 @@ Best practice:
 
 MCP tool pointers:
 
-- Use **`manage_illuminate_assets`** with your API key to create and manage resources.
+- Use **`manage_illuminate`** with your API key to create and manage resources.
 
 ---
 
@@ -368,7 +368,7 @@ Best practice:
 
 MCP tool pointers:
 
-- Use **`manage_illuminate_assets`** to create, update, activate, and delete Business Objects.
+- Use **`manage_illuminate`** to create, update, activate, and delete Business Objects.
 
 ---
 
@@ -406,7 +406,7 @@ Best practice:
 
 MCP tool pointers:
 
-- Use **`manage_illuminate_assets`** to create, update, and delete Metrics.
+- Use **`manage_illuminate`** to create, update, and delete Metrics.
 
 ---
 
@@ -540,7 +540,7 @@ Before creating a new METRIC or QUERY decision, list existing decisions of that 
 
 MCP tool pointers:
 
-- Use **`manage_illuminate_assets`** for the full 4-step creation workflow.
+- Use **`manage_illuminate`** for the full 4-step creation workflow.
 
 ---
 
@@ -603,7 +603,7 @@ Always test a pipeline ad-hoc first, then rewrite it to the saved format before 
 
 MCP tool pointers:
 
-- Use **`manage_illuminate_assets`** to create, execute, and manage Queries.
+- Use **`manage_illuminate`** to create, execute, and manage Queries.
 
 ---
 
@@ -639,7 +639,7 @@ Best practice:
 
 MCP tool pointers:
 
-- Use **`manage_illuminate_assets`** to create and manage Dashboards and charts.
+- Use **`manage_illuminate`** to create and manage Dashboards and charts.
 
 ---
 
@@ -659,4 +659,4 @@ MCP tool pointers:
   - **`get_pubnub_messages`**, **`get_pubnub_presence`**
 
 - App Context (Objects): **`manage_app_context`**
-- Illuminate: **`manage_illuminate_assets`** (Business Objects, Metrics, Decisions, Queries, Dashboards)
+- Illuminate: **`manage_illuminate`** (Business Objects, Metrics, Decisions, Queries, Dashboards)
