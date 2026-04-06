@@ -191,6 +191,21 @@ Methods to implement:
 - Empty body → return `{ success: true }`
 - Non-2xx → throw with status + body text
 
+### Rate limiting and retries
+
+`api.ts` does **not** implement retry logic — this matches the existing `src/lib/portal/` module
+pattern. `429 Too Many Requests` and transient `5xx` errors are thrown by `handleResponse`,
+caught by the handler's `catch (e)` block, and surfaced to Claude as error responses. Claude
+can then inform the user and ask them to retry. This is an explicit design decision for
+consistency with the rest of the codebase.
+
+### Pagination
+
+`listResources` passes the full API response through without modification, including any
+`next` or `offset` pagination tokens the Illuminate API returns. Callers receive the raw
+response structure. This is consistent with the portal module pattern. Full pagination
+support (auto-fetching all pages) is a future enhancement if needed.
+
 ---
 
 ## handlers.ts
@@ -228,7 +243,8 @@ const defaults = {
   hitType:     "SINGLE",
   executeOnce: false,
   activeFrom:  new Date().toISOString(),
-  activeUntil: "2027-12-31T23:59:59Z",
+  // Rolling 2-year window from now — avoids a hardcoded expiry date becoming stale
+  activeUntil: new Date(Date.now() + 2 * 365 * 24 * 60 * 60 * 1000).toISOString(),
 };
 ```
 
@@ -245,6 +261,28 @@ Scenarios:
 - `generic` — random users and channels
 - `chat-flooding` — many messages from one user on one channel
 - `cross-posting` — same user posting to many channels
+
+**Key requirement for publish-fake-data:** `getPubNubClient` requires `PUBNUB_PUBLISH_KEY`
+and `PUBNUB_SUBSCRIBE_KEY` (or the `publish_key` / `subscribe_key` arguments). A user who
+only configured `ILLUMINATE_API_KEY` will get a confusing error. The handler must check for
+these keys *before* attempting to publish and surface a clear, actionable message:
+
+```typescript
+// In the publish-fake-data branch of the handler
+const publishKey = args.publish_key ?? process.env.PUBNUB_PUBLISH_KEY;
+const subscribeKey = args.subscribe_key ?? process.env.PUBNUB_SUBSCRIBE_KEY;
+
+if (!publishKey || !subscribeKey) {
+  return createResponse(
+    "publish-fake-data requires a PubNub keyset. " +
+    "Provide your keyset's publish and subscribe keys using the publish_key and subscribe_key " +
+    "arguments, or set the PUBNUB_PUBLISH_KEY and PUBNUB_SUBSCRIBE_KEY environment variables. " +
+    "These are the same keys used by your PubNub application — find them in the PubNub Portal " +
+    "under your keyset.",
+    true
+  );
+}
+```
 
 ### Response pattern
 
@@ -333,12 +371,31 @@ Illuminate Read & Write. The key starts with `si_`.
 ILLUMINATE_API_KEY=
 ```
 
-`server.json` — add to `environmentVariables[]`:
+`server.json` — add to `environmentVariables[]`, and **update** the existing
+`PUBNUB_PUBLISH_KEY` and `PUBNUB_SUBSCRIBE_KEY` entries to mention Illuminate:
 
 ```json
 {
   "name": "ILLUMINATE_API_KEY",
   "description": "Illuminate Service Integration API key (si_...) for managing Illuminate resources. Obtain from PubNub Portal → Service Integrations → Account-level → Illuminate Read & Write.",
+  "isRequired": false,
+  "isSecret": true
+}
+```
+
+Also update the existing `PUBNUB_PUBLISH_KEY` and `PUBNUB_SUBSCRIBE_KEY` descriptions in
+`server.json` to mention the Illuminate `publish-fake-data` operation:
+
+```json
+{
+  "name": "PUBNUB_PUBLISH_KEY",
+  "description": "PubNub publish key for real-time operations and Illuminate publish-fake-data testing. Required when using manage_illuminate with publish-fake-data.",
+  "isRequired": false,
+  "isSecret": true
+},
+{
+  "name": "PUBNUB_SUBSCRIBE_KEY",
+  "description": "PubNub subscribe key for real-time operations and Illuminate publish-fake-data testing. Required when using manage_illuminate with publish-fake-data.",
   "isRequired": false,
   "isSecret": true
 }

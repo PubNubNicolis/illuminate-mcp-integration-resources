@@ -6,6 +6,13 @@ overview: >
   can fetch them via the how_to() tool. This phase is independent of the manage_illuminate
   tool and should be completed first so Claude has reference material the moment the tool ships.
 todos:
+  - id: complete-missing-files
+    content: >
+      Before opening any PR: (1) Review and complete how-tos/how_to_automate_illuminate_with_scripts.md
+      — the stub exists but needs review for accuracy. (2) Create the set-up-illuminate-gaming
+      guide in the documentation-api repo using the outline in this file. Both files must exist
+      before the PR is opened.
+    status: pending
   - id: publish-howto-files
     content: >
       Copy the 9 how-to markdown files from illuminate-mcp/how-tos/ into the
@@ -85,6 +92,40 @@ Each file already has YAML frontmatter with `resource`, `triggers`, `requires`, 
 `produces` fields that the docs API can use for indexing. The files also contain
 `## Using the manage_illuminate Tool` sections with MCP tool-call JSON examples added
 during the illuminate-mcp work session.
+
+### Pre-requisite: complete the two missing files before opening the PR
+
+**`how_to_automate_illuminate_with_scripts.md`** — A stub exists in `illuminate-mcp/how-tos/`.
+Review it for accuracy and completeness before publishing.
+
+**`set-up-illuminate-gaming`** — This guide does not exist yet and must be created in the
+documentation-api repo. Use the outline below.
+
+#### Outline for `set-up-illuminate-gaming`
+
+Slug: `set-up-illuminate-gaming`
+
+Sections to cover:
+
+1. **What Illuminate does for live events and gaming** — real-time KPI tracking, automated
+   rewards, spam protection, engagement re-activation. One paragraph, outcome-focused.
+
+2. **Playbook 1 — Reward Engagement**
+   - Business goal: encourage active participation (poll answers, chat, reactions)
+   - Recommended path: Metrics + Dashboards + Decisions (with optional Query Builder for Top N / Bottom N ranking)
+   - Step-by-step: create BO with user/channel/event-type fields, create COUNT metrics per behavior, create dashboard charts, create Decisions with per-rule rate limits (1 per day per user), optionally add engagement drop alert
+   - Predefined templates: Top N Rankings, Bottom N Rankings (do not recreate manually)
+
+3. **Playbook 2 — Spam Detection**
+   - Business goal: detect flooding and cross-posting, escalate automatically
+   - Recommended path: Query Builder predefined templates + Decisions
+   - Step-by-step: create/confirm BO (built-in fields auto-created for chat), use Chat Flooding Spam and/or Cross-Posting Spam templates, create escalating Decision (low → notify; medium → notify + mute; high → notify + mute + ban)
+   - Note: built-in BO fields (User, Channel, Message, Message Type) are auto-created — do not ask users to define them
+
+4. **Using the manage_illuminate Tool** — show the key tool calls:
+   - Create BO, activate, create COUNT metric, create Decision with escalating rules, publish fake test data (chat-flooding scenario), check action log
+
+5. **Tips** — use per-rule execution rate limits to prevent reward/action spam; match Decision `executionFrequency` to the metric `evaluationWindow`; validate thresholds on dashboards before enabling Decisions in production
 
 ---
 
